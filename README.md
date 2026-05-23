@@ -20,6 +20,24 @@ The Apps Script side sets
 [`Code.js`](https://github.com/augmented-human-lab/ahl-meeting-appscript/blob/main/src/Code.js)
 so the iframe is allowed.
 
+## PWA install
+
+The wrapper page is an installable PWA — visiting `meeting.ahlab.org`
+prompts users to install it as a standalone app (icon on desktop / home
+screen, opens in its own window without browser chrome).
+
+- [`manifest.json`](manifest.json) — name, icons (AHL favicon from
+  cdn.ahlab.org), `display: standalone`, AHL purple theme color.
+- [`sw.js`](sw.js) — minimal service worker. Caches the wrapper shell
+  (`index.html`, `manifest.json`) for offline launch; the Apps Script
+  iframe content goes straight to the network (we can't cache cross-origin
+  Google traffic). Cache name is `meeting-ahlab-v1` — bump the version
+  string when you want users to pick up wrapper-side changes immediately.
+
+Once installed, the app opens at `https://meeting.ahlab.org/?source=pwa`
+so installed launches are distinguishable in analytics from browser
+visits.
+
 ## DNS / hosting
 
 - DNS: `meeting.ahlab.org` → GitHub Pages (`augmented-human-lab.github.io`).

@@ -6,7 +6,12 @@
   <title>AHLab · Group Meeting</title>
   <meta name="description" content="AHLab bi-weekly group meeting dashboard — agenda, people, grants, papers, projects, students and travel.">
   <link rel="icon" href="https://cdn.ahlab.org/media/site/cropped-Group@2x-192x192.png">
+  <link rel="apple-touch-icon" href="https://cdn.ahlab.org/media/site/cropped-Group@2x-192x192.png">
+  <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#6100FF">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AHL Meeting">
   <style>
     html, body { margin: 0; height: 100%; background: #0E0F11; overscroll-behavior: none; }
     iframe { width: 100%; height: 100%; border: 0; display: block; background: #F4F7F9; }
@@ -28,6 +33,18 @@
     title="AHLab Group Meeting"
     allow="fullscreen; clipboard-write">
   </iframe>
+  <script>
+    // Register the service worker so the install prompt fires + the
+    // wrapper shell works offline. Fails silently in unsupported
+    // browsers.
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').catch(function (err) {
+          console.warn('Service worker registration failed:', err);
+        });
+      });
+    }
+  </script>
   <noscript>
     <div class="fallback">
       <p>

@@ -1,0 +1,34 @@
+{
+  "name": "AHLab Group Meeting",
+  "short_name": "AHL Meeting",
+  "description": "AHLab bi-weekly group meeting dashboard — agenda, people, grants, papers, projects, students and travel.",
+  "id": "/?source=pwa",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0E0F11",
+  "theme_color": "#6100FF",
+  "lang": "en",
+  "categories": ["productivity", "education"],
+  "icons": [
+    {
+      "src": "https://cdn.ahlab.org/media/site/cropped-Group@2x-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://cdn.ahlab.org/media/site/cropped-Group@2x-192x192.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://cdn.ahlab.org/media/site/cropped-Group@2x-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
