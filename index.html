@@ -37,6 +37,9 @@
       .gate-card img.spin { animation-duration: 4s; }
     }
     .gate-card h1 { font-weight: 800; font-size: 21px; margin: 0 0 10px; }
+    /* The ready card has no body text, so the button needs the breathing room
+       the paragraph used to provide. */
+    .gate-card h1 + a.btn { margin-top: 12px; }
     .gate-card p { color: #5E6875; font-size: 14px; line-height: 1.55; margin: 0 0 22px; text-wrap: balance; }
     .gate-card .alt { display: block; margin-top: 16px; font-size: 12px; color: #838D95; }
     .gate-card .acct { display: block; margin-top: 14px; font-size: 13px; color: #5E6875; }
@@ -94,8 +97,6 @@
     <div class="gate-card">
       <img src="https://cdn.ahlab.org/media/site/black_logo_circle.png" alt="AHL">
       <h1>Meeting ready</h1>
-      <p>Your browser needs the meeting in its own tab.<br>
-      One click and you&rsquo;re in.</p>
       <!-- Straight to the domain-scoped URL, opened at top level. It resolves
            to the browser's @ahlab.org session whatever else is signed in, so
            there is nothing to pick; the account chooser only added a step
