@@ -15,6 +15,30 @@
   <style>
     html, body { margin: 0; height: 100%; background: #0E0F11; overscroll-behavior: none; }
     iframe { width: 100%; height: 100%; border: 0; display: block; background: #F4F7F9; }
+    /* Shown only when the app never reports in — i.e. Google replaced it
+       with a sign-in page the browser won't let us frame. */
+    .gate {
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      padding: 24px; box-sizing: border-box; font-family: "neue-haas-grotesk-text", system-ui, sans-serif;
+      background:
+        radial-gradient(60% 40% at 0% 0%, rgba(0,215,238,.10), transparent 70%),
+        radial-gradient(50% 50% at 100% 100%, rgba(97,0,255,.08), transparent 70%), #F4F7F9;
+      color: #0E0F11;
+    }
+    .gate-card {
+      max-width: 440px; background: #fff; border-radius: 16px; padding: 36px 32px; text-align: center;
+      box-shadow: 0 1px 2px rgba(14,15,17,.04), 0 8px 24px rgba(14,15,17,.06);
+    }
+    .gate-card img { width: 52px; height: 52px; border-radius: 50%; margin-bottom: 18px; }
+    .gate-card h1 { font-weight: 800; font-size: 21px; margin: 0 0 10px; }
+    .gate-card p { color: #5E6875; font-size: 14px; line-height: 1.55; margin: 0 0 22px; }
+    .gate-card a.btn {
+      display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+      font-weight: 600; font-size: 14px; color: #fff; padding: 12px 22px; border-radius: 999px;
+      background: linear-gradient(221deg, #00D7EE 0%, #6100FF 100%);
+      box-shadow: 0 6px 18px rgba(97,0,255,.22);
+    }
+    [hidden] { display: none !important; }
     .fallback {
       position: fixed; inset: 0;
       display: flex; align-items: center; justify-content: center;
@@ -33,10 +57,48 @@
        account, which is the wrong one for anyone signed in to a personal
        Gmail alongside their AHL account. -->
   <iframe
+    id="appFrame"
     src="https://script.google.com/a/macros/ahlab.org/s/AKfycbyncFllmgHMBcyCc0tCJi5bvQC-cdzsHOPBrI04c87_gzrba0ovo7-bYttGZzD-gPik/exec"
     title="AHLab Group Meeting"
     allow="fullscreen; clipboard-write">
   </iframe>
+  <div class="gate" id="frameGate" hidden>
+    <div class="gate-card">
+      <img src="https://cdn.ahlab.org/media/site/black_logo_circle.png" alt="AHL">
+      <h1>Open the meeting app</h1>
+      <p>Your browser doesn’t pass your Google sign-in into an embedded
+      window, so the meeting can’t load here. Opening it in the full tab
+      signs you in as usual.</p>
+      <a class="btn"
+         href="https://script.google.com/a/macros/ahlab.org/s/AKfycbyncFllmgHMBcyCc0tCJi5bvQC-cdzsHOPBrI04c87_gzrba0ovo7-bYttGZzD-gPik/exec">
+        Open the meeting &rarr;
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // The app posts {ahl:'ready'} as soon as its page runs. If nothing arrives,
+    // Google replaced it inside the frame with a sign-in page that browsers
+    // refuse to display framed (Safari, Firefox strict mode, private windows) —
+    // so we show a card that opens the app in the full tab instead.
+    (function () {
+      var gate = document.getElementById('frameGate');
+      var frame = document.getElementById('appFrame');
+      var ready = false;
+      window.addEventListener('message', function (e) {
+        if (!e.data || e.data.ahl !== 'ready') return;
+        ready = true;
+        gate.hidden = true;
+        frame.style.display = '';
+      });
+      setTimeout(function () {
+        if (ready) return;
+        frame.style.display = 'none';
+        gate.hidden = false;
+      }, 9000);
+    })();
+  </script>
+
   <script>
     // Register the service worker so the install prompt fires + the
     // wrapper shell works offline. Fails silently in unsupported
