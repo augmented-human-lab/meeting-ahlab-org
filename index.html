@@ -37,8 +37,10 @@
       .gate-card img.spin { animation-duration: 4s; }
     }
     .gate-card h1 { font-weight: 800; font-size: 21px; margin: 0 0 10px; }
-    .gate-card p { color: #5E6875; font-size: 14px; line-height: 1.55; margin: 0 0 22px; }
+    .gate-card p { color: #5E6875; font-size: 14px; line-height: 1.55; margin: 0 0 22px; text-wrap: balance; }
     .gate-card .alt { display: block; margin-top: 16px; font-size: 12px; color: #838D95; }
+    .gate-card .acct { display: block; margin-top: 14px; font-size: 13px; color: #5E6875; }
+    .gate-card .acct b { font-weight: 600; color: #0E0F11; }
     .gate-card .alt a { color: #6100FF; text-decoration: none; }
     .gate-card a.btn {
       display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
@@ -92,14 +94,14 @@
     <div class="gate-card">
       <img src="https://cdn.ahlab.org/media/site/black_logo_circle.png" alt="AHL">
       <h1>Meeting ready</h1>
-      <p>Your browser doesn’t pass your Google sign-in into an embedded
-      window, so the meeting can’t load here. Opening it in the full tab
-      signs you in as usual.</p>
+      <p>Your browser needs the meeting in its own tab.
+      One click and you&rsquo;re in.</p>
       <a class="btn" id="gateBtn"
          href="https://script.google.com/macros/s/AKfycbyncFllmgHMBcyCc0tCJi5bvQC-cdzsHOPBrI04c87_gzrba0ovo7-bYttGZzD-gPik/exec">
         <img class="btn-avatar" id="gateAvatar" alt="" hidden>
         <span>Open the meeting</span>
       </a>
+      <span class="acct" id="gateAccount" hidden></span>
       <span class="alt">Wrong Google account?
         <a href="https://accounts.google.com/AccountChooser?continue=https%3A%2F%2Fscript.google.com%2Fa%2Fmacros%2Fahlab.org%2Fs%2FAKfycbyncFllmgHMBcyCc0tCJi5bvQC-cdzsHOPBrI04c87_gzrba0ovo7-bYttGZzD-gPik%2Fexec">Choose your AHL account</a>
       </span>
@@ -125,19 +127,36 @@
       // The breakout card can't know who is signed in — that is the whole
       // reason it is showing. So it reuses the identity the app reported on a
       // previous visit, and simply omits the photo the first time.
-      function paintAvatar() {
+      // The card can't know who is signed in — that is the whole reason it is
+      // showing. So it reuses the identity the app reported on a previous
+      // visit: the member's photo if we have one that loads, otherwise their
+      // email address, otherwise nothing.
+      function paintAccount() {
         var raw = null;
         try { raw = localStorage.getItem(USER_KEY); } catch (e) {}
         if (!raw) return;
         var user;
         try { user = JSON.parse(raw); } catch (e) { return; }
-        if (!user || !user.photo) return;
+        if (!user) return;
+
+        var label = document.getElementById('gateAccount');
+        function showEmail() {
+          if (!user.email) return;
+          label.innerHTML = 'Opens as <b></b>';
+          label.querySelector('b').textContent = user.email;
+          label.hidden = false;
+        }
+
+        if (!user.photo) { showEmail(); return; }
         var img = document.getElementById('gateAvatar');
         var btn = document.getElementById('gateBtn');
         img.onload = function () {
           img.hidden = false;
           btn.classList.add('has-avatar');
         };
+        // Directory photo URLs 403 for non-admin members, so a photo we were
+        // given may still fail to render.
+        img.onerror = showEmail;
         img.alt = user.name || user.email || '';
         img.src = user.photo;
       }
@@ -159,7 +178,7 @@
       setTimeout(function () {
         if (ready) return;
         loading.hidden = true;
-        paintAvatar();
+        paintAccount();
         gate.hidden = false;
       }, 7000);
     })();
