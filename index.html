@@ -32,6 +32,8 @@
     .gate-card img { width: 52px; height: 52px; border-radius: 50%; margin-bottom: 18px; }
     .gate-card h1 { font-weight: 800; font-size: 21px; margin: 0 0 10px; }
     .gate-card p { color: #5E6875; font-size: 14px; line-height: 1.55; margin: 0 0 22px; }
+    .gate-card .alt { display: block; margin-top: 16px; font-size: 12px; color: #838D95; }
+    .gate-card .alt a { color: #6100FF; text-decoration: none; }
     .gate-card a.btn {
       display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
       font-weight: 600; font-size: 14px; color: #fff; padding: 12px 22px; border-radius: 999px;
@@ -52,16 +54,25 @@
   </style>
 </head>
 <body>
-  <!-- Domain-scoped web-app address (/a/macros/ahlab.org/…). The plain
-       /macros/s/<id>/exec form is served as the browser's DEFAULT Google
-       account, which is the wrong one for anyone signed in to a personal
-       Gmail alongside their AHL account. -->
+  <!-- Plain /macros/s/<id>/exec on purpose. The domain-scoped
+       /a/macros/ahlab.org/ form returns Google's own "401. That's an error."
+       page when the browser's default account is a personal Gmail, and that
+       error renders inside this frame. The plain form always runs the app,
+       which then offers the account chooser itself. -->
   <iframe
     id="appFrame"
-    src="https://script.google.com/a/macros/ahlab.org/s/AKfycbyncFllmgHMBcyCc0tCJi5bvQC-cdzsHOPBrI04c87_gzrba0ovo7-bYttGZzD-gPik/exec"
+    src="https://script.google.com/macros/s/AKfycbyncFllmgHMBcyCc0tCJi5bvQC-cdzsHOPBrI04c87_gzrba0ovo7-bYttGZzD-gPik/exec"
     title="AHLab Group Meeting"
     allow="fullscreen; clipboard-write">
   </iframe>
+  <div class="gate" id="frameLoading">
+    <div class="gate-card">
+      <img src="https://cdn.ahlab.org/media/site/black_logo_circle.png" alt="AHL">
+      <h1>Loading the meeting&hellip;</h1>
+      <p>Fetching the agenda, people and project updates.</p>
+    </div>
+  </div>
+
   <div class="gate" id="frameGate" hidden>
     <div class="gate-card">
       <img src="https://cdn.ahlab.org/media/site/black_logo_circle.png" alt="AHL">
@@ -70,9 +81,12 @@
       window, so the meeting can’t load here. Opening it in the full tab
       signs you in as usual.</p>
       <a class="btn"
-         href="https://script.google.com/a/macros/ahlab.org/s/AKfycbyncFllmgHMBcyCc0tCJi5bvQC-cdzsHOPBrI04c87_gzrba0ovo7-bYttGZzD-gPik/exec">
+         href="https://script.google.com/macros/s/AKfycbyncFllmgHMBcyCc0tCJi5bvQC-cdzsHOPBrI04c87_gzrba0ovo7-bYttGZzD-gPik/exec">
         Open the meeting &rarr;
       </a>
+      <span class="alt">Wrong Google account?
+        <a href="https://accounts.google.com/AccountChooser?continue=https%3A%2F%2Fscript.google.com%2Fa%2Fmacros%2Fahlab.org%2Fs%2FAKfycbyncFllmgHMBcyCc0tCJi5bvQC-cdzsHOPBrI04c87_gzrba0ovo7-bYttGZzD-gPik%2Fexec">Choose your AHL account</a>
+      </span>
     </div>
   </div>
 
@@ -83,19 +97,27 @@
     // so we show a card that opens the app in the full tab instead.
     (function () {
       var gate = document.getElementById('frameGate');
-      var frame = document.getElementById('appFrame');
+      var loading = document.getElementById('frameLoading');
       var ready = false;
+
+      // The app posts {ahl:'ready'} as soon as its page runs — from the viewer,
+      // the sign-in card and the access-denied page alike. Until then an AHL
+      // loading screen covers the frame, because what is behind it may be
+      // Google's own error or sign-in page rather than our app.
       window.addEventListener('message', function (e) {
         if (!e.data || e.data.ahl !== 'ready') return;
         ready = true;
+        loading.hidden = true;
         gate.hidden = true;
-        frame.style.display = '';
       });
+
+      // Nothing reported in: Google replaced the app inside the frame with a
+      // page that refuses to be framed. Offer the full tab instead.
       setTimeout(function () {
         if (ready) return;
-        frame.style.display = 'none';
+        loading.hidden = true;
         gate.hidden = false;
-      }, 9000);
+      }, 7000);
     })();
   </script>
 
@@ -117,7 +139,7 @@
         JavaScript is required.
         <br><br>
         Open
-        <a href="https://script.google.com/a/macros/ahlab.org/s/AKfycbyncFllmgHMBcyCc0tCJi5bvQC-cdzsHOPBrI04c87_gzrba0ovo7-bYttGZzD-gPik/exec">
+        <a href="https://script.google.com/macros/s/AKfycbyncFllmgHMBcyCc0tCJi5bvQC-cdzsHOPBrI04c87_gzrba0ovo7-bYttGZzD-gPik/exec">
           the app directly
         </a>.
       </p>

@@ -46,12 +46,16 @@ visits.
 
 ## When the Apps Script deployment URL changes
 
-The iframe uses the **domain-scoped** form of the web-app URL,
-`https://script.google.com/a/macros/ahlab.org/s/<deploymentId>/exec`. The plain
-`/macros/s/<deploymentId>/exec` form is served as whatever Google treats as the
-browser's default account, so people signed in to a personal Gmail alongside
-their AHL account land on the wrong account. Keep the `/a/macros/ahlab.org/`
-prefix when updating the URL.
+The iframe uses the **plain** `/macros/s/<deploymentId>/exec` URL. The
+domain-scoped `/a/macros/ahlab.org/s/<deploymentId>/exec` form returns Google's
+own `401. That's an error.` page when the browser's default Google account is a
+personal Gmail, and that error renders inside the frame. The plain form always
+runs the app, which then shows its own card and offers Google's account chooser.
+The domain-scoped URL is only ever used as the `continue=` target of that
+chooser, once the AHL account has been picked.
+
+An AHL loading screen covers the frame until the app posts `{ahl:'ready'}`, so
+nobody sees whatever Google put there in the meantime.
 
 Bump `CACHE` in [`sw.js`](sw.js) on every `index.html` change, or installed
 copies keep serving the old shell.
