@@ -4,7 +4,7 @@
 // shell makes the install prompt fire and lets the app open offline
 // (with the iframe showing a Google-side network-error if there's no
 // network).
-const CACHE = 'meeting-ahlab-v1';
+const CACHE = 'meeting-ahlab-v2';
 const SHELL = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', (event) => {

@@ -46,6 +46,16 @@ visits.
 
 ## When the Apps Script deployment URL changes
 
+The iframe uses the **domain-scoped** form of the web-app URL,
+`https://script.google.com/a/macros/ahlab.org/s/<deploymentId>/exec`. The plain
+`/macros/s/<deploymentId>/exec` form is served as whatever Google treats as the
+browser's default account, so people signed in to a personal Gmail alongside
+their AHL account land on the wrong account. Keep the `/a/macros/ahlab.org/`
+prefix when updating the URL.
+
+Bump `CACHE` in [`sw.js`](sw.js) on every `index.html` change, or installed
+copies keep serving the old shell.
+
 The deployment ID is baked into `index.html`. If you ever create a
 *new* deployment in Apps Script (instead of redeploying against the
 existing stable deployment), update the `src` attribute in
