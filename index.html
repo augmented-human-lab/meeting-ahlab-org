@@ -96,15 +96,18 @@
       <h1>Meeting ready</h1>
       <p>Your browser needs the meeting in its own tab.<br>
       One click and you&rsquo;re in.</p>
+      <!-- Straight to the account chooser, not the plain app URL: with more
+           than one Google session open the plain URL redirects to an
+           account-indexed address (/macros/u/1/s/…) that answers "Sorry,
+           unable to open the file at present." Picking the account first
+           lands on the domain-scoped URL, which resolves correctly. -->
       <a class="btn" id="gateBtn"
-         href="https://script.google.com/macros/s/AKfycbyncFllmgHMBcyCc0tCJi5bvQC-cdzsHOPBrI04c87_gzrba0ovo7-bYttGZzD-gPik/exec">
+         href="https://accounts.google.com/AccountChooser?continue=https%3A%2F%2Fscript.google.com%2Fa%2Fmacros%2Fahlab.org%2Fs%2FAKfycbyncFllmgHMBcyCc0tCJi5bvQC-cdzsHOPBrI04c87_gzrba0ovo7-bYttGZzD-gPik%2Fexec">
         <img class="btn-avatar" id="gateAvatar" alt="" hidden>
         <span>Open the meeting</span>
       </a>
       <span class="acct" id="gateAccount" hidden></span>
-      <span class="alt">Wrong Google account?
-        <a href="https://accounts.google.com/AccountChooser?continue=https%3A%2F%2Fscript.google.com%2Fa%2Fmacros%2Fahlab.org%2Fs%2FAKfycbyncFllmgHMBcyCc0tCJi5bvQC-cdzsHOPBrI04c87_gzrba0ovo7-bYttGZzD-gPik%2Fexec">Choose your AHL account</a>
-      </span>
+      <span class="alt">Pick your <b>@ahlab.org</b> account on the next screen.</span>
     </div>
   </div>
 
