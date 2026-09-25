@@ -20,6 +20,42 @@ The Apps Script side sets
 [`Code.js`](https://github.com/augmented-human-lab/ahl-meeting-appscript/blob/main/src/Code.js)
 so the iframe is allowed.
 
+## The two gate screens
+
+Browsers that withhold the Google session from a third-party frame (Safari,
+Firefox strict mode, private windows) get Google's sign-in page in the frame
+instead of the app — and Google refuses to be framed, so the app cannot even
+show its own card there. Two screens cover that:
+
+- **"Loading the meeting"** covers the frame from the first paint, with the AHL
+  logo spinning as the progress indicator, so whatever Google puts in the frame
+  is never visible.
+- **"Meeting ready"** replaces it after 7 seconds if the app has not reported
+  in, offering a button that opens the meeting in a full tab.
+
+The app posts `{ahl:'ready', user}` to `window.top` from the viewer, the
+sign-in card and the access-denied page. Receiving it hides both screens. The
+`user` it carries is cached in `localStorage` (`ahl-meeting-user-v1`) and used
+to show the member's photo on the button — or their email when there is no
+usable photo. A browser where the app has never loaded inside the frame has
+nothing cached, so the button carries neither.
+
+## Which URL goes where — get this wrong and the app looks broken
+
+| Address | In the frame | On a button |
+|---|---|---|
+| plain `/macros/s/<id>/exec` | **use this** — the app always runs, so it can show its own card | with several Google sessions open, Google rewrites it to `/macros/u/<n>/s/…`, which dead-ends on "Sorry, unable to open the file at present." |
+| domain `/a/macros/ahlab.org/s/<id>/exec` | Google's own `401. That's an error.` page when there is no @ahlab.org session | **use this** — it resolves to the @ahlab.org session whatever else is signed in |
+
+The frame also appends `?embed=1`, which is how the app tells a frame from a
+full tab; it cannot work that out itself, because Apps Script always nests page
+HTML in its own frame.
+
+The domain-scoped address pins to the @ahlab.org session regardless of which
+account is picked in Google's chooser, so the chooser is not used as a first
+step. It survives only as the "Add your AHL account" link, for a browser signed
+in to no AHL account at all.
+
 ## PWA install
 
 The wrapper page is an installable PWA — visiting `meeting.ahlab.org`
